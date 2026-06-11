@@ -3,10 +3,8 @@ from dash import Input, Output, dcc, dash_table, html
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import seaborn as sns
-from plotly.graph_objs.layout.scene import yaxis
 
 df = sns.load_dataset("diamonds")
-
 
 app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP],
@@ -20,20 +18,18 @@ app.layout = dbc.Container([
     html.P("Descrição do dashboard",
            className="text-center"),
 
-
     dbc.Row([
         html.H3("Filtros"),
         dbc.Col([
             html.Label("Qualidade do corte"),
             dcc.Dropdown(id="cut_filter",
                          options=[
-                             {"lable":cut, "value":cut}
+                             {"lable": cut, "value": cut}
                              for cut in sorted(df["cut"].unique())
                          ],
                          value=list(df["cut"].unique()),
-                         multi=True,)
-        ], width= 4),
-
+                         multi=True, )
+        ], width=4),
 
         dbc.Col([
             html.Label("Cor"),
@@ -52,14 +48,13 @@ app.layout = dbc.Container([
             dcc.Slider(id="price_filter",
                        min=int(df["price"].min()),
                        max=int(df.price.max()),
-                       value=int(df.price.max()),
+
                        tooltip={"placement": "bottom",
                                 "always_visible": False},
-
                        marks=None
                        )
         ])
-    ] ,className="mb-4"), # filtros
+    ], className="mb-4"),  # filtros
 
     dbc.Row([
 
@@ -69,8 +64,8 @@ app.layout = dbc.Container([
                     html.H5("N.º de diamantes"),
                     html.H3(id="kpi_count", children="12")
                 ])
-            ), width= 3
-        ), # Kpi 1
+            ), width=3
+        ),  # Kpi 1
 
         dbc.Col(
             dbc.Card(
@@ -99,36 +94,28 @@ app.layout = dbc.Container([
             ), width=3
         ),  # Kpi 4
 
-    ], className="mb-4"), # Kpis
-
+    ]),  # Kpis
 
     dbc.Row([
         dbc.Col(
             dcc.Graph(id="scatter_graph"),
-            width= 8
-        ),
+            width=8),
 
         dbc.Col(
             dcc.Graph(id="hist_graph"),
-            width=4
-        ),
-
-    ]), # Graficos
+            width=4),
+    ]),  # Graficos
 
     html.H3("Tabela de dados", className="mt-4"),
 
     dash_table.DataTable(
         id="data_table",
-
         page_size=10,
         sort_action="native",
-        filter_action="native",
-
-
-    )
-
+        filter_action="native", )
 
 ], fluid=True)
+
 
 @app.callback(
     Output("kpi_count", "children"),
@@ -137,23 +124,23 @@ app.layout = dbc.Container([
     Output("kpi_avg_carat", "children"),
 
     Output("scatter_graph", "figure"),
-    Output("hist_graph", "figure"),
+    # Output("hist_graph", "figure"),
 
-   # Output("data_table", "data"),
-   # Output("data_table", "columns"),
+    # Output("data_table", "data"),
+    # Output("data_table", "columns"),
 
-    Input("cut_filter", "value"),
-    Input("color_filter", "value"),
-    Input("price_filter", "value"),
+    Input('cut_filter', 'value'),
+    Input('color_filter', 'value'),
+    Input('price_filter', 'value')
 )
 def update_dashboard(select_cut, select_color, max_price):
     df_filtrada = df[
         (df["cut"].isin(select_cut)) &
         (df["color"].isin(select_color)) &
         (df["price"] <= max_price)
-    ]
+        ]
 
-    # calc KPIs
+    # Calcular KPIs
 
     count = len(df_filtrada)
     kpi_count = f"{count:,}".replace(",", " ")
@@ -161,14 +148,11 @@ def update_dashboard(select_cut, select_color, max_price):
     avg_price = df_filtrada["price"].mean()
     kpi_avg_price = f"{avg_price:.2f} €"
 
-
     max_price = df_filtrada["price"].max()
     kpi_max_price = f"{max_price:.2f} €"
 
     avg_carat = df_filtrada["carat"].mean()
-    kpi_avg_carat = f"{avg_carat:.2f}"
-
-
+    kpi_avg_carat = f"{avg_carat:.2f} €"
 
     scatter_fig = px.scatter(
         df_filtrada,
@@ -177,40 +161,21 @@ def update_dashboard(select_cut, select_color, max_price):
         color="cut",
         size="depth",
         hover_data=["color", "clarity", "table"],
-        title="Relação entre quilates e preço"
+        title="Relação entre preço e quilates"
     )
 
     scatter_fig.update_layout(
         xaxis_title="Quilates",
-        yaxis_title="Preço"
+        yaxis_title="preço"
     )
 
-
-    hist_fig = px.histogram(
-        df_filtrada,
-        x="price",
-        color="cut",
-        nbins=50,
-        title="Distribuição por preço"
-
-    )
-
-    hist_fig.update_layout(
-        xaxis_title="Preço",
-        yaxis_title="Num de diamantes",
-    )
-
-    return (
-        kpi_count,
-        kpi_avg_price,
-        kpi_max_price,
-        kpi_avg_carat,
-        scatter_fig,
-        hist_fig
-    )
-
-
+    return (kpi_count,
+            kpi_avg_price,
+            kpi_max_price,
+            kpi_avg_carat,
+            scatter_fig,
+            )
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8081)
+    app.run(debug=True, port=8082)
