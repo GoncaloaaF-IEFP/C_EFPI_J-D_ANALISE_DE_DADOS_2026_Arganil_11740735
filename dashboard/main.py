@@ -98,9 +98,35 @@ app.layout = dbc.Container([
             ), width=3
         ),  # Kpi 4
 
-    ]), # Kpis
+    ], className="mb-4"), # Kpis
 
-    dbc.Row([]) # Graficos
+
+    dbc.Row([
+        dbc.Col(
+            dcc.Graph(id="scatter_graph"),
+            width= 8
+        ),
+
+        dbc.Col(
+            dcc.Graph(id="hist_graph"),
+            width=4
+        ),
+
+    ]), # Graficos
+
+    html.H3("Tabela de dados", className="mt-4"),
+
+    dash_table.DataTable(
+        id="data_table",
+
+        page_size=10,
+        sort_action="native",
+        filter_action="native",
+        
+
+    )
+
+
 ], fluid=True)
 
 if __name__ == "__main__":
