@@ -139,8 +139,8 @@ app.layout = dbc.Container([
     Output("scatter_graph", "figure"),
     Output("hist_graph", "figure"),
 
-   # Output("data_table", "data"),
-   # Output("data_table", "columns"),
+    Output("data_table", "data"),
+    Output("data_table", "columns"),
 
     Input("cut_filter", "value"),
     Input("color_filter", "value"),
@@ -200,13 +200,23 @@ def update_dashboard(select_cut, select_color, max_price):
         yaxis_title="Num de diamantes",
     )
 
+
+    table_data = df_filtrada.to_dict("records")
+
+    table_columns = [
+        {"name":column, "id":column}
+        for column in df_filtrada.columns
+    ]
+
     return (
         kpi_count,
         kpi_avg_price,
         kpi_max_price,
         kpi_avg_carat,
         scatter_fig,
-        hist_fig
+        hist_fig,
+        table_data,
+        table_columns,
     )
 
 
