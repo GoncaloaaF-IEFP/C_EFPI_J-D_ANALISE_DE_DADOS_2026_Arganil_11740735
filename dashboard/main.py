@@ -60,7 +60,45 @@ app.layout = dbc.Container([
         ])
     ] ,className="mb-4"), # filtros
 
-    dbc.Row([]), # Kpis
+    dbc.Row([
+
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.H5("N.º de diamantes"),
+                    html.H3(id="kpi_count", children="12")
+                ])
+            ), width= 3
+        ), # Kpi 1
+
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.H5("Preço médio"),
+                    html.H3(id="kpi_avg_price", children="12")
+                ])
+            ), width=3
+        ),  # Kpi 2
+
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.H5("Maior preço"),
+                    html.H3(id="kpi_max_price", children="12")
+                ])
+            ), width=3
+        ),  # Kpi 3
+
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.H5("Quilates médios"),
+                    html.H3(id="kpi_avg_carat", children="12")
+                ])
+            ), width=3
+        ),  # Kpi 4
+
+    ]), # Kpis
 
     dbc.Row([]) # Graficos
 ], fluid=True)
