@@ -22,23 +22,47 @@ app.layout = dbc.Container([
 
 
     dbc.Row([
+        html.H3("Filtros"),
         dbc.Col([
             html.Label("Qualidade do corte"),
-            dcc.Dropdown(id="cut_filter",)
+            dcc.Dropdown(id="cut_filter",
+                         options=[
+                             {"lable":cut, "value":cut}
+                             for cut in sorted(df["cut"].unique())
+                         ],
+                         value=list(df["cut"].unique()),
+                         multi=True,)
+        ], width= 4),
 
-        ]),
+
         dbc.Col([
             html.Label("Cor"),
-            dcc.Dropdown(id="color_filter", )
+            dcc.Dropdown(id="color_filter",
+                         options=[
+                             {"lable": color, "value": color}
+                             for color in sorted(df["color"].unique())
+                         ],
+                         value=list(df["color"].unique()),
+                         multi=True,
+                         )
         ]),
 
         dbc.Col([
             html.Label("Preço máximo"),
-            dcc.Slider(id="price_filter", )
+            dcc.Slider(id="price_filter",
+                       min=int(df["price"].min()),
+                       max=int(df.price.max()),
+
+                       tooltip={"placement": "bottom",
+                                "always_visible": False},
+                       marks=None
+                       )
         ])
-    ] ,className="mb-4")
+    ] ,className="mb-4"), # filtros
 
+    dbc.Row([]), # Kpis
 
+    dbc.Row([]) # Graficos
 ], fluid=True)
 
 if __name__ == "__main__":
